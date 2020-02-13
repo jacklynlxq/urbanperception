@@ -1,0 +1,21 @@
+Data Preprocessing Pipeline:
+1. Data Preprocessing
+2. Annotation
+3. Remove Duplicate from the Result of Combination of Left and Right Winners
+
+Data Gathering for training data:
+DownloadGSV_Multilabelled_Training
+
+Model Building:
+train
+download augmented data
+combine augmented data
+
+Data visualisation:
+--draw map
+1. snap to road api
+2. download gsv
+3. geocoding api
+4. 
+
+

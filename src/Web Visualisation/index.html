@@ -1,0 +1,1302 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript">
+    
+          // Load Charts and the corechart package.
+          google.charts.load('current', {'packages':['corechart']});
+    
+        </script>
+        <h2>VISUALISATION OF URBAN PERCEPTION OF NEIGHBOURHOODS IN KUALA LUMPUR</h2>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <style>
+        #map {
+            width: 1500px;
+            height: 645px;
+        }
+        </style>
+        <title>VISUALISATION OF URBAN PERCEPTION OF NEIGHBOURHOODS IN KUALA LUMPUR</title>
+
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="data/KL_Neighbourhood_wealthy_2.js"></script>
+        <script src="data/KL_Neighbourhood_safety_3.js"></script>
+        <script src="data/KL_Neighbourhood_lively_4.js"></script>
+        <script src="data/KL_Neighbourhood_depressing_5.js"></script>
+        <script src="data/KL_Neighbourhood_boring_6.js"></script>
+        <script src="data/KL_Neighbourhood_beautiful_7.js"></script>
+        <script src="data/KL_Neighbourhood_predominance_8.js"></script>
+        <script src="data/labelled_KL_with_neighbourhoodNames_9.js"></script>
+        <!-- <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">  -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
+        <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+
+        <script>
+
+        // pop up for KL neighbourhood predominance map
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+
+            highlightLayer.openPopup();
+        }
+
+
+        // pop up for points
+        var onClickLayer;
+        function onClickFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+            // highlightLayer.openPopup();
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[3.112981057304945,101.63777497625726],[3.2250301603050073,101.81285169969486]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        var layer_GoogleEarth_0 = L.tileLayer('http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}', {
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 18
+        });
+        layer_GoogleEarth_0;
+        map.addLayer(layer_GoogleEarth_0);
+        var layer_GoogleMap_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 18
+        });
+        layer_GoogleMap_1;
+        map.addLayer(layer_GoogleMap_1);
+        function pop_KL_Neighbourhood_wealthy_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Neighbourhood Name</strong><br />' + (feature.properties['labelled_KL_with_neighbourhoodNames_KL_neighbourhood_with_name_neighbourhood_name'] !== null ? Autolinker.link(feature.properties['labelled_KL_with_neighbourhoodNames_KL_neighbourhood_with_name_neighbourhood_name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Neighbourhood ID</strong><br />' + (feature.properties['id'] !== null ? Autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Average Wealthy Score</strong><br />' + (feature.properties['labelled_KL_with_neighbourhoodNames_average_wealthy'] !== null ? Autolinker.link(feature.properties['labelled_KL_with_neighbourhoodNames_average_wealthy'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_KL_Neighbourhood_wealthy_2_0(feature) {
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_wealthy'] >= 0.332558 && feature.properties['labelled_KL_with_neighbourhoodNames_average_wealthy'] <= 0.465713 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_wealthy_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_wealthy'] >= 0.465713 && feature.properties['labelled_KL_with_neighbourhoodNames_average_wealthy'] <= 0.598867 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_wealthy_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(244,233,195,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_wealthy'] >= 0.598867 && feature.properties['labelled_KL_with_neighbourhoodNames_average_wealthy'] <= 0.732022 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_wealthy_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(233,210,134,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_wealthy'] >= 0.732022 && feature.properties['labelled_KL_with_neighbourhoodNames_average_wealthy'] <= 0.865177 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_wealthy_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(222,187,74,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_wealthy'] >= 0.865177 && feature.properties['labelled_KL_with_neighbourhoodNames_average_wealthy'] <= 0.998331 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_wealthy_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(210,165,13,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_KL_Neighbourhood_wealthy_2');
+        map.getPane('pane_KL_Neighbourhood_wealthy_2').style.zIndex = 402;
+        map.getPane('pane_KL_Neighbourhood_wealthy_2').style['mix-blend-mode'] = 'normal';
+        var layer_KL_Neighbourhood_wealthy_2 = new L.geoJson(json_KL_Neighbourhood_wealthy_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_KL_Neighbourhood_wealthy_2',
+            layerName: 'layer_KL_Neighbourhood_wealthy_2',
+            pane: 'pane_KL_Neighbourhood_wealthy_2',
+            onEachFeature: pop_KL_Neighbourhood_wealthy_2,
+            style: style_KL_Neighbourhood_wealthy_2_0,
+        });
+        bounds_group.addLayer(layer_KL_Neighbourhood_wealthy_2);
+        function pop_KL_Neighbourhood_safety_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Neighbourhood Name</strong><br />' + (feature.properties['labelled_KL_with_neighbourhoodNames_KL_neighbourhood_with_name_neighbourhood_name'] !== null ? Autolinker.link(feature.properties['labelled_KL_with_neighbourhoodNames_KL_neighbourhood_with_name_neighbourhood_name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Neighbourhood ID</strong><br />' + (feature.properties['id'] !== null ? Autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Average Safety Score</strong><br />' + (feature.properties['labelled_KL_with_neighbourhoodNames_average_safety'] !== null ? Autolinker.link(feature.properties['labelled_KL_with_neighbourhoodNames_average_safety'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_KL_Neighbourhood_safety_3_0(feature) {
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_safety'] >= 0.005867 && feature.properties['labelled_KL_with_neighbourhoodNames_average_safety'] <= 0.112600 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_safety_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_safety'] >= 0.112600 && feature.properties['labelled_KL_with_neighbourhoodNames_average_safety'] <= 0.219333 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_safety_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(224,199,232,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_safety'] >= 0.219333 && feature.properties['labelled_KL_with_neighbourhoodNames_average_safety'] <= 0.326066 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_safety_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(193,143,209,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_safety'] >= 0.326066 && feature.properties['labelled_KL_with_neighbourhoodNames_average_safety'] <= 0.432800 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_safety_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(162,86,185,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_safety'] >= 0.432800 && feature.properties['labelled_KL_with_neighbourhoodNames_average_safety'] <= 0.539533 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_safety_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(131,30,162,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_KL_Neighbourhood_safety_3');
+        map.getPane('pane_KL_Neighbourhood_safety_3').style.zIndex = 403;
+        map.getPane('pane_KL_Neighbourhood_safety_3').style['mix-blend-mode'] = 'normal';
+        var layer_KL_Neighbourhood_safety_3 = new L.geoJson(json_KL_Neighbourhood_safety_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_KL_Neighbourhood_safety_3',
+            layerName: 'layer_KL_Neighbourhood_safety_3',
+            pane: 'pane_KL_Neighbourhood_safety_3',
+            onEachFeature: pop_KL_Neighbourhood_safety_3,
+            style: style_KL_Neighbourhood_safety_3_0,
+        });
+        bounds_group.addLayer(layer_KL_Neighbourhood_safety_3);
+        function pop_KL_Neighbourhood_lively_4(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Neighbourhood Name</strong><br />' + (feature.properties['labelled_KL_with_neighbourhoodNames_KL_neighbourhood_with_name_neighbourhood_name'] !== null ? Autolinker.link(feature.properties['labelled_KL_with_neighbourhoodNames_KL_neighbourhood_with_name_neighbourhood_name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Neighbourhood ID</strong><br />' + (feature.properties['id'] !== null ? Autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Average Lively Score</strong><br />' + (feature.properties['labelled_KL_with_neighbourhoodNames_average_lively'] !== null ? Autolinker.link(feature.properties['labelled_KL_with_neighbourhoodNames_average_lively'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_KL_Neighbourhood_lively_4_0(feature) {
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_lively'] >= 0.498097 && feature.properties['labelled_KL_with_neighbourhoodNames_average_lively'] <= 0.597632 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_lively_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_lively'] >= 0.597632 && feature.properties['labelled_KL_with_neighbourhoodNames_average_lively'] <= 0.697167 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_lively_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,201,194,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_lively'] >= 0.697167 && feature.properties['labelled_KL_with_neighbourhoodNames_average_lively'] <= 0.796702 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_lively_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,146,132,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_lively'] >= 0.796702 && feature.properties['labelled_KL_with_neighbourhoodNames_average_lively'] <= 0.896237 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_lively_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,92,71,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_lively'] >= 0.896237 && feature.properties['labelled_KL_with_neighbourhoodNames_average_lively'] <= 0.995772 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_lively_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,37,9,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_KL_Neighbourhood_lively_4');
+        map.getPane('pane_KL_Neighbourhood_lively_4').style.zIndex = 404;
+        map.getPane('pane_KL_Neighbourhood_lively_4').style['mix-blend-mode'] = 'normal';
+        var layer_KL_Neighbourhood_lively_4 = new L.geoJson(json_KL_Neighbourhood_lively_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_KL_Neighbourhood_lively_4',
+            layerName: 'layer_KL_Neighbourhood_lively_4',
+            pane: 'pane_KL_Neighbourhood_lively_4',
+            onEachFeature: pop_KL_Neighbourhood_lively_4,
+            style: style_KL_Neighbourhood_lively_4_0,
+        });
+        bounds_group.addLayer(layer_KL_Neighbourhood_lively_4);
+        function pop_KL_Neighbourhood_depressing_5(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Neighbourhood Name</strong><br />' + (feature.properties['labelled_KL_with_neighbourhoodNames_KL_neighbourhood_with_name_neighbourhood_name'] !== null ? Autolinker.link(feature.properties['labelled_KL_with_neighbourhoodNames_KL_neighbourhood_with_name_neighbourhood_name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Neighbourhood ID</strong><br />' + (feature.properties['id'] !== null ? Autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Average Depressing Score</strong><br />' + (feature.properties['labelled_KL_with_neighbourhoodNames_average_depressing'] !== null ? Autolinker.link(feature.properties['labelled_KL_with_neighbourhoodNames_average_depressing'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_KL_Neighbourhood_depressing_5_0(feature) {
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_depressing'] >= 0.088580 && feature.properties['labelled_KL_with_neighbourhoodNames_average_depressing'] <= 0.238869 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_depressing_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_depressing'] >= 0.238869 && feature.properties['labelled_KL_with_neighbourhoodNames_average_depressing'] <= 0.389158 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_depressing_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(194,211,237,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_depressing'] >= 0.389158 && feature.properties['labelled_KL_with_neighbourhoodNames_average_depressing'] <= 0.539447 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_depressing_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(132,167,219,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_depressing'] >= 0.539447 && feature.properties['labelled_KL_with_neighbourhoodNames_average_depressing'] <= 0.689737 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_depressing_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(71,123,201,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_depressing'] >= 0.689737 && feature.properties['labelled_KL_with_neighbourhoodNames_average_depressing'] <= 0.840026 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_depressing_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(9,78,183,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_KL_Neighbourhood_depressing_5');
+        map.getPane('pane_KL_Neighbourhood_depressing_5').style.zIndex = 405;
+        map.getPane('pane_KL_Neighbourhood_depressing_5').style['mix-blend-mode'] = 'normal';
+        var layer_KL_Neighbourhood_depressing_5 = new L.geoJson(json_KL_Neighbourhood_depressing_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_KL_Neighbourhood_depressing_5',
+            layerName: 'layer_KL_Neighbourhood_depressing_5',
+            pane: 'pane_KL_Neighbourhood_depressing_5',
+            onEachFeature: pop_KL_Neighbourhood_depressing_5,
+            style: style_KL_Neighbourhood_depressing_5_0,
+        });
+        bounds_group.addLayer(layer_KL_Neighbourhood_depressing_5);
+        function pop_KL_Neighbourhood_boring_6(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Neighbourhood Name</strong><br />' + (feature.properties['labelled_KL_with_neighbourhoodNames_KL_neighbourhood_with_name_neighbourhood_name'] !== null ? Autolinker.link(feature.properties['labelled_KL_with_neighbourhoodNames_KL_neighbourhood_with_name_neighbourhood_name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Neighbourhood ID</strong><br />' + (feature.properties['id'] !== null ? Autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Average Boring Score</strong><br />' + (feature.properties['labelled_KL_with_neighbourhoodNames_average_boring'] !== null ? Autolinker.link(feature.properties['labelled_KL_with_neighbourhoodNames_average_boring'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_KL_Neighbourhood_boring_6_0(feature) {
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_boring'] >= 0.097518 && feature.properties['labelled_KL_with_neighbourhoodNames_average_boring'] <= 0.270096 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_boring_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_boring'] >= 0.270096 && feature.properties['labelled_KL_with_neighbourhoodNames_average_boring'] <= 0.442674 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_boring_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(218,207,203,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_boring'] >= 0.442674 && feature.properties['labelled_KL_with_neighbourhoodNames_average_boring'] <= 0.615253 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_boring_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(181,159,150,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_boring'] >= 0.615253 && feature.properties['labelled_KL_with_neighbourhoodNames_average_boring'] <= 0.787831 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_boring_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(143,110,97,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_boring'] >= 0.787831 && feature.properties['labelled_KL_with_neighbourhoodNames_average_boring'] <= 0.960409 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_boring_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(106,62,45,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_KL_Neighbourhood_boring_6');
+        map.getPane('pane_KL_Neighbourhood_boring_6').style.zIndex = 406;
+        map.getPane('pane_KL_Neighbourhood_boring_6').style['mix-blend-mode'] = 'normal';
+        var layer_KL_Neighbourhood_boring_6 = new L.geoJson(json_KL_Neighbourhood_boring_6, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_KL_Neighbourhood_boring_6',
+            layerName: 'layer_KL_Neighbourhood_boring_6',
+            pane: 'pane_KL_Neighbourhood_boring_6',
+            onEachFeature: pop_KL_Neighbourhood_boring_6,
+            style: style_KL_Neighbourhood_boring_6_0,
+        });
+        bounds_group.addLayer(layer_KL_Neighbourhood_boring_6);
+        function pop_KL_Neighbourhood_beautiful_7(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Neighbourhood Name</strong><br />' + (feature.properties['labelled_KL_with_neighbourhoodNames_KL_neighbourhood_with_name_neighbourhood_name'] !== null ? Autolinker.link(feature.properties['labelled_KL_with_neighbourhoodNames_KL_neighbourhood_with_name_neighbourhood_name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Neighbourhood ID</strong><br />' + (feature.properties['id'] !== null ? Autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Average Beautiful Score</strong><br />' + (feature.properties['labelled_KL_with_neighbourhoodNames_average_beautiful'] !== null ? Autolinker.link(feature.properties['labelled_KL_with_neighbourhoodNames_average_beautiful'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_KL_Neighbourhood_beautiful_7_0(feature) {
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_beautiful'] >= 0.388071 && feature.properties['labelled_KL_with_neighbourhoodNames_average_beautiful'] <= 0.509354 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_beautiful_7',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_beautiful'] >= 0.509354 && feature.properties['labelled_KL_with_neighbourhoodNames_average_beautiful'] <= 0.630638 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_beautiful_7',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(194,224,206,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_beautiful'] >= 0.630638 && feature.properties['labelled_KL_with_neighbourhoodNames_average_beautiful'] <= 0.751921 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_beautiful_7',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(133,192,157,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_beautiful'] >= 0.751921 && feature.properties['labelled_KL_with_neighbourhoodNames_average_beautiful'] <= 0.873204 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_beautiful_7',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(72,161,108,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['labelled_KL_with_neighbourhoodNames_average_beautiful'] >= 0.873204 && feature.properties['labelled_KL_with_neighbourhoodNames_average_beautiful'] <= 0.994487 ) {
+                return {
+                pane: 'pane_KL_Neighbourhood_beautiful_7',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(11,129,59,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_KL_Neighbourhood_beautiful_7');
+        map.getPane('pane_KL_Neighbourhood_beautiful_7').style.zIndex = 407;
+        map.getPane('pane_KL_Neighbourhood_beautiful_7').style['mix-blend-mode'] = 'normal';
+        var layer_KL_Neighbourhood_beautiful_7 = new L.geoJson(json_KL_Neighbourhood_beautiful_7, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_KL_Neighbourhood_beautiful_7',
+            layerName: 'layer_KL_Neighbourhood_beautiful_7',
+            pane: 'pane_KL_Neighbourhood_beautiful_7',
+            onEachFeature: pop_KL_Neighbourhood_beautiful_7,
+            style: style_KL_Neighbourhood_beautiful_7_0,
+        });
+        bounds_group.addLayer(layer_KL_Neighbourhood_beautiful_7);
+
+        // ADD BAR CHART HERE
+        // ADD BAR CHART HERE
+        // ADD BAR CHART HERE
+        // ADD BAR CHART HERE
+        // ADD BAR CHART HERE
+        // ADD BAR CHART HERE
+        // ADD BAR CHART HERE
+        // ADD BAR CHART HERE
+        // ADD BAR CHART HERE
+        // ADD BAR CHART HERE
+
+        // Callback that draws the bar
+        // function drawHashtagsAdidasChart() {
+
+        //     var data = google.visualization.arrayToDataTable([
+        //     ['Hashtag', 'Amount of Hashtags'],
+        //     ['heretocreate', 317],
+        //     ['yesadidas', 148],
+        //     ['teamadidas', 67],
+        //     ['creatorsunite', 27],
+        //     ['747warehousest', 23]
+        //     ]);
+
+        //     var options = {
+        //     title: 'Amount of Hashtags',
+        //             width:700,
+        //             height:600,
+        //     hAxis: {
+        //       title: 'Amount of Hashtags',
+        //       minValue: 0
+        //     },
+        //     vAxis: {
+        //       title: 'Hashtag'
+        //     },
+        //     legend : 'none'
+        //     };
+
+
+        //     var chart = new google.visualization.BarChart(document.getElementById('adidas_hashtags_chart_div'));
+
+        //     chart.draw(data, options);
+        // }        
+
+        // Draw the pie chart for the friend chart when Charts is loaded.
+        // google.charts.setOnLoadCallback(drawHashtagsAdidasChart);
+        // Callback that draws the bar
+        function drawPerceptualScoresChart(feature) {
+
+            var data = google.visualization.arrayToDataTable([
+            ['Attribute', 'Score', { role: "style" }],
+                ['Beautiful', feature.properties['labelled_KL_with_neighbourhoodNames_average_beautiful'], "#0b813b"],
+                ['Boring', feature.properties['labelled_KL_with_neighbourhoodNames_average_boring'], "#6f412f"],
+                ['Depressing', feature.properties['labelled_KL_with_neighbourhoodNames_average_depressing'], "#1e73f3"],
+                ['Lively', feature.properties['labelled_KL_with_neighbourhoodNames_average_lively'], "#ff6c59"],
+                ['Safety', feature.properties['labelled_KL_with_neighbourhoodNames_average_safety'], "#ebb80f"],
+                ['Wealthy', feature.properties['labelled_KL_with_neighbourhoodNames_average_wealthy'], "#a326c9"]
+                ]);
+
+            // sort by column 0, descending
+            data.sort({column: 1, desc: true});
+
+            var options = {
+            title: 'Attribute Scores',
+                    width:400,
+                    height:200,
+            hAxis: {
+              title: 'Score',
+              minValue: 0
+            },
+            vAxis: {
+              title: 'Attribute'
+            },
+            legend : 'none'
+            };
+
+
+            var chart = new google.visualization.BarChart(document.getElementById('perceptual_scores_chart_div'));
+
+            chart.draw(data, options);
+        }
+
+        function pop_KL_Neighbourhood_predominance_8(feature, layer) {
+
+
+
+            layer.on({
+
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+                popupopen: function(e){
+                    drawPerceptualScoresChart(feature);
+                }
+                
+            });
+            // layer.on('popupopen',function(e){
+            //     console.log("popupopen");
+            //     // drawHashtagsAdidasChart();
+            // })
+            // ADD BAR CHART HERE
+            // ADD BAR CHART HERE
+            // ADD BAR CHART HERE
+            // ADD BAR CHART HERE
+            // ADD BAR CHART HERE
+            // ADD BAR CHART HERE
+            // ADD BAR CHART HERE
+            // ADD BAR CHART HERE
+            // ADD BAR CHART HERE
+            // ADD BAR CHART HERE
+
+
+
+
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Neighbourhood Name</strong><br />' + (feature.properties['labelled_KL_with_neighbourhoodNames_KL_neighbourhood_with_name_neighbourhood_name'] !== null ? Autolinker.link(feature.properties['labelled_KL_with_neighbourhoodNames_KL_neighbourhood_with_name_neighbourhood_name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Neighbourhood ID</strong><br />' + (feature.properties['id'] !== null ? Autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                    <td><div id="perceptual_scores_chart_div"></div></td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Predominant Attribute</strong><br />' + (feature.properties['predominan'] !== null ? Autolinker.link(feature.properties['predominan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Strength of Predominance</strong><br />' + (feature.properties['str_predom'] !== null ? Autolinker.link(feature.properties['str_predom'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    </table>';
+
+            // var popupContent = L.popup().setContent('<div id="adidas_hashtags_chart_div" align = "center">1</div>')
+                    
+            // var popupContent = '<div id="adidas_hashtags_chart_div" align = "center"></div>';        
+                
+            layer.bindPopup(popupContent, {maxHeight: 300, maxWidth: "auto"});
+
+            // layer.on('popupopen',function(e){
+            //     console.log("popupopen");
+            //     // drawHashtagsAdidasChart();
+            // })
+
+            // layer.bindPopup(drawHashtagsUnderArmourChart(), {maxHeight: 400});
+        }
+
+
+
+
+                // return a list of high and low boundaries for each division
+        function index_range(var_geoJSON, division){
+            var max = -10000000;
+            var min = 100000000;
+            console.log(var_geoJSON.features.length);
+            for (var i=0 ; i<var_geoJSON.features.length; i++) {
+                max = Math.max(parseFloat(var_geoJSON.features[i]["properties"]['str_predom']), max);
+            }
+            for (var i=0 ; i<var_geoJSON.features.length; i++) {
+                min = Math.min(parseFloat(var_geoJSON.features[i]["properties"]['str_predom']), min);
+            }
+
+            var range = max-min;
+
+            // get range for each index
+            var index_range = range/division;
+            
+            var boundaries = new Array(division);
+
+            // assigning arrays of high and low boundaries starting from min value
+            for (var i = 0; i < boundaries.length; i++){
+                boundaries[i] = new Array(min, min+index_range);
+                min += index_range;
+                // console.log(boundaries[i][0]);
+                // console.log(boundaries[i][1]);
+            }
+            return boundaries;
+        }
+
+
+        function style_KL_Neighbourhood_predominance_8_0(feature) {
+            var boundaries = index_range(json_KL_Neighbourhood_predominance_8,5);
+
+            if (parseFloat(feature.properties['str_predom']) >= boundaries[0][0] && parseFloat(feature.properties['str_predom']) <= boundaries[0][1])
+                opacity = 0.2;
+            else if (parseFloat(feature.properties['str_predom']) >= boundaries[1][0] && parseFloat(feature.properties['str_predom']) <= boundaries[1][1])
+                opacity = 0.3;
+            else if (parseFloat(feature.properties['str_predom']) >= boundaries[2][0] && parseFloat(feature.properties['str_predom']) <= boundaries[2][1])
+                opacity = 0.6;
+            else if (parseFloat(feature.properties['str_predom']) >= boundaries[3][0] && parseFloat(feature.properties['str_predom']) <= boundaries[3][1])
+                opacity = 0.8;
+            else if (parseFloat(feature.properties['str_predom']) >= boundaries[4][0] && parseFloat(feature.properties['str_predom']) <= boundaries[4][1])
+                opacity = 1.0;
+            
+            switch(String(feature.properties['predominan'])) {
+                case 'beautiful':
+                    return {
+                pane: 'pane_KL_Neighbourhood_predominance_8',
+                opacity: opacity,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: opacity,
+                fillColor: 'rgba(11,129,59,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'boring':
+                    return {
+                pane: 'pane_KL_Neighbourhood_predominance_8',
+                opacity: opacity,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: opacity,
+                fillColor: 'rgba(111,65,47,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'depressing':
+                    return {
+                pane: 'pane_KL_Neighbourhood_predominance_8',
+                opacity: opacity,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: opacity,
+                fillColor: 'rgba(30,115,243,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'lively':
+                    return {
+                pane: 'pane_KL_Neighbourhood_predominance_8',
+                opacity: opacity,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: opacity,
+                fillColor: 'rgba(255,108,89,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'wealthy':
+                    return {
+                pane: 'pane_KL_Neighbourhood_predominance_8',
+                opacity: opacity,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: opacity,
+                fillColor: 'rgba(235,184,15,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'safety':
+                    return {
+                pane: 'pane_KL_Neighbourhood_predominance_8',
+                opacity: opacity,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: opacity,
+                fillColor: 'rgba(163,38,201,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_KL_Neighbourhood_predominance_8');
+        map.getPane('pane_KL_Neighbourhood_predominance_8').style.zIndex = 408;
+        map.getPane('pane_KL_Neighbourhood_predominance_8').style['mix-blend-mode'] = 'normal';
+        var layer_KL_Neighbourhood_predominance_8 = new L.geoJson(json_KL_Neighbourhood_predominance_8, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_KL_Neighbourhood_predominance_8',
+            layerName: 'layer_KL_Neighbourhood_predominance_8',
+            pane: 'pane_KL_Neighbourhood_predominance_8',
+            onEachFeature: pop_KL_Neighbourhood_predominance_8,
+            style: style_KL_Neighbourhood_predominance_8_0,
+        });
+        bounds_group.addLayer(layer_KL_Neighbourhood_predominance_8);
+        map.addLayer(layer_KL_Neighbourhood_predominance_8);
+        
+
+        function drawPerceptualScoresOfPointsChart(feature) {
+
+            var data = google.visualization.arrayToDataTable([
+            ['Attribute', 'Score', { role: "style" }],
+                ['Beautiful', feature.properties['average_beautiful'], "#0b813b"],
+                ['Boring', feature.properties['average_boring'], "#6f412f"],
+                ['Depressing', feature.properties['average_depressing'], "#1e73f3"],
+                ['Lively', feature.properties['average_lively'], "#ff6c59"],
+                ['Safety', feature.properties['average_safety'], "#ebb80f"],
+                ['Wealthy', feature.properties['average_wealthy'], "#a326c9"]
+                ]);
+
+            // sort by column 0, descending
+            data.sort({column: 1, desc: true});
+
+            var options = {
+            title: 'Attribute Scores',
+                    width:400,
+                    height:200,
+            hAxis: {
+              title: 'Score',
+              minValue: 0
+            },
+            vAxis: {
+              title: 'Attribute'
+            },
+            legend : 'none'
+            };
+
+
+            var chart = new google.visualization.BarChart(document.getElementById('perceptual_scores_points_chart_div'));
+
+            chart.draw(data, options);
+        }
+        
+        
+        function pop_labelled_KL_with_neighbourhoodNames_9(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: onClickFeature,
+                popupopen: function(e){
+                    drawPerceptualScoresOfPointsChart(feature);
+                }
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>GSV Image</strong><br /><img src="KL_GSV/' + (feature.properties['filename'] !== null ? Autolinker.link(feature.properties['filename'].toLocaleString()) : '') +'"></td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Neighbourhood Name</strong><br />' + (feature.properties['KL_neighbourhood_with_name_neighbourhood_name'] !== null ? Autolinker.link(feature.properties['KL_neighbourhood_with_name_neighbourhood_name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Neighbourhood ID</strong><br />' + (feature.properties['neighbourhoodID'] !== null ? Autolinker.link(feature.properties['neighbourhoodID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Latitude</strong><br />' + (feature.properties['latitude'] !== null ? Autolinker.link(feature.properties['latitude'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Longitude</strong><br />' + (feature.properties['longitude'] !== null ? Autolinker.link(feature.properties['longitude'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                    <td><div id="perceptual_scores_points_chart_div"></div></td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400, maxWidth: "auto"});
+        }
+
+        function style_labelled_KL_with_neighbourhoodNames_9_0() {
+            return {
+                pane: 'pane_labelled_KL_with_neighbourhoodNames_9',
+                radius: 3.2,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(252,23,35,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_labelled_KL_with_neighbourhoodNames_9');
+        map.getPane('pane_labelled_KL_with_neighbourhoodNames_9').style.zIndex = 409;
+        map.getPane('pane_labelled_KL_with_neighbourhoodNames_9').style['mix-blend-mode'] = 'normal';
+        var layer_labelled_KL_with_neighbourhoodNames_9 = new L.geoJson(json_labelled_KL_with_neighbourhoodNames_9, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_labelled_KL_with_neighbourhoodNames_9',
+            layerName: 'layer_labelled_KL_with_neighbourhoodNames_9',
+            pane: 'pane_labelled_KL_with_neighbourhoodNames_9',
+            onEachFeature: pop_labelled_KL_with_neighbourhoodNames_9,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_labelled_KL_with_neighbourhoodNames_9_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_labelled_KL_with_neighbourhoodNames_9);
+        map.addLayer(layer_labelled_KL_with_neighbourhoodNames_9);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/labelled_KL_with_neighbourhoodNames_9.png" /> labelled_KL_with_neighbourhoodNames': layer_labelled_KL_with_neighbourhoodNames_9,'KL_Neighbourhood_predominance<br /><table><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_predominance_8_beautiful0.png" /></td><td>beautiful</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_predominance_8_boring1.png" /></td><td>boring</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_predominance_8_depressing2.png" /></td><td>depressing</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_predominance_8_lively3.png" /></td><td>lively</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_predominance_8_wealthy4.png" /></td><td>wealthy</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_predominance_8_safety5.png" /></td><td>safety</td></tr></table>': layer_KL_Neighbourhood_predominance_8,'KL_Neighbourhood_beautiful<br /><table><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_beautiful_7_0390510.png" /></td><td>0.39 - 0.51</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_beautiful_7_0510631.png" /></td><td>0.51 - 0.63</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_beautiful_7_0630752.png" /></td><td>0.63 - 0.75</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_beautiful_7_0750873.png" /></td><td>0.75 - 0.87</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_beautiful_7_0870994.png" /></td><td>0.87 - 0.99</td></tr></table>': layer_KL_Neighbourhood_beautiful_7,'KL_Neighbourhood_boring<br /><table><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_boring_6_0100270.png" /></td><td>0.10 - 0.27</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_boring_6_0270441.png" /></td><td>0.27 - 0.44</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_boring_6_0440622.png" /></td><td>0.44 - 0.62</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_boring_6_0620793.png" /></td><td>0.62 - 0.79</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_boring_6_0790964.png" /></td><td>0.79 - 0.96</td></tr></table>': layer_KL_Neighbourhood_boring_6,'KL_Neighbourhood_depressing<br /><table><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_depressing_5_0090240.png" /></td><td>0.09 - 0.24</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_depressing_5_0240391.png" /></td><td>0.24 - 0.39</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_depressing_5_0390542.png" /></td><td>0.39 - 0.54</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_depressing_5_0540693.png" /></td><td>0.54 - 0.69</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_depressing_5_0690844.png" /></td><td>0.69 - 0.84</td></tr></table>': layer_KL_Neighbourhood_depressing_5,'KL_Neighbourhood_lively<br /><table><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_lively_4_0500600.png" /></td><td>0.50 - 0.60</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_lively_4_0600701.png" /></td><td>0.60 - 0.70</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_lively_4_0700802.png" /></td><td>0.70 - 0.80</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_lively_4_0800903.png" /></td><td>0.80 - 0.90</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_lively_4_0901004.png" /></td><td>0.90 - 1.00</td></tr></table>': layer_KL_Neighbourhood_lively_4,'KL_Neighbourhood_safety<br /><table><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_safety_3_0010110.png" /></td><td>0.01 - 0.11</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_safety_3_0110221.png" /></td><td>0.11 - 0.22</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_safety_3_0220332.png" /></td><td>0.22 - 0.33</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_safety_3_0330433.png" /></td><td>0.33 - 0.43</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_safety_3_0430544.png" /></td><td>0.43 - 0.54</td></tr></table>': layer_KL_Neighbourhood_safety_3,'KL_Neighbourhood_wealthy<br /><table><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_wealthy_2_0330470.png" /></td><td>0.33 - 0.47</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_wealthy_2_0470601.png" /></td><td>0.47 - 0.60</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_wealthy_2_0600732.png" /></td><td>0.60 - 0.73</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_wealthy_2_0730873.png" /></td><td>0.73 - 0.87</td></tr><tr><td style="text-align: center;"><img src="legend/KL_Neighbourhood_wealthy_2_0871004.png" /></td><td>0.87 - 1.00</td></tr></table>': layer_KL_Neighbourhood_wealthy_2,"GoogleMap": layer_GoogleMap_1,"GoogleEarth": layer_GoogleEarth_0,},{collapsed:false}).addTo(map);
+        setBounds();
+        var searchControl = new L.Control.Search({
+            layer: layer_KL_Neighbourhood_predominance_8,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'labelled_KL_with_neighbourhoodNames_KL_neighbourhood_with_name_neighbourhood_name'});
+        searchControl.on('search:locationfound', function(e) {
+            e.layer.setStyle({fillColor: '#ffff00', color: '#ffff00', fillOpacity: 1});
+            if(e.layer._popup)
+                e.layer.openPopup();
+
+        });
+        // .on('search:collapsed', function(e) {
+
+        //     layer_KL_Neighbourhood_predominance_8.eachLayer(function(layer) {
+        //         layer_KL_Neighbourhood_predominance_8.resetStyle(layer);
+        //     }); 
+        // });
+        map.addControl(searchControl);
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        
+        // var helloPopup = L.popup({
+            
+        //     offset: L.point(-650, 200)
+        // }).setContent('Hello World!');
+        // L.easyButton('fa-globe', function(btn, map){
+        //     helloPopup.setLatLng(map.getCenter()).openOn(map);
+        // }).addTo( map );
+        
+        
+        </script>
+    </body>
+</html>
