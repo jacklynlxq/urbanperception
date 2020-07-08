@@ -1,4 +1,6 @@
-# FYP - Learning Urban Perception of Cities via Street View Images
+# Learning Urban Perception of Cities via Street View Images
+- This project is an effort for my final year project in university, currently I am not actively developing this project but I am trying to extend the project using Tensorflow.js for active client-side urban prediction given an area.
+
 - The Pipeline of Data Preprocessing to Visualising is in the src folder.
 
 - Download the weight file from the trained model [here](https://drive.google.com/open?id=1HIy3pvJ3_a5RxLcuilXazWAYJTBVyWeU). For prediction of new GSV images, set the path of the weight and run all cells in `"src/Training/pedict.ipynb"`

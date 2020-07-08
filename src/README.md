@@ -16,6 +16,7 @@ Data Preprocessing -> Download GSV for Training-> Training -> Download GSV for P
 
 ## Training
 Run all cells in `"Training/train.ipynb"`
+Note: Transfer Learning was done using the Keras VGG16-places365 pretrained model provided by https://github.com/GKalliatakis/Keras-VGG16-places365
 
 ## Download GSV for Prediction 
 1. Draw neighbourhood map
